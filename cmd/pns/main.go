@@ -5,12 +5,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pns/handler"
+	"pns/cmd/pns/router"
 )
 
 const (
-	defaultPort    = "8080"
-	tokensEndpoint = "/api/v1/tokens"
+	defaultPort = "8080"
 )
 
 func main() {
@@ -19,17 +18,14 @@ func main() {
 		log.Fatal("Error loading environment file: ", err)
 	}
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("SERVER_PORT")
 	if port == "" {
 		log.Println("No port set, using default one (" + defaultPort + ")")
 		port = defaultPort
 	}
 
-	// setup http handlers for our API routes
-	http.HandleFunc(tokensEndpoint, handler.RegisterDeviceToken)
-	http.HandleFunc(tokensEndpoint, handler.DeleteDeviceToken)
-
-	err := http.ListenAndServe(":"+port, nil)
+	log.Printf("Listening on port %s...", port)
+	err := http.ListenAndServe(":"+port, router.New())
 	if err != nil {
 		log.Fatal(err)
 	}
