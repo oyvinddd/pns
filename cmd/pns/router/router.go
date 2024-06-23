@@ -6,12 +6,14 @@ import (
 )
 
 const (
-	tokensEndpoint = "/api/v1/tokens"
+	tokensEndpoint  = "/api/v1/tokens"
+	messageEndpoint = "/api/v1/messages"
 )
 
 func New() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc(tokensEndpoint, handleDeviceTokens)
+	mux.HandleFunc(messageEndpoint, sendPushMessage)
 	return mux
 }
 
@@ -21,6 +23,14 @@ func handleDeviceTokens(w http.ResponseWriter, r *http.Request) {
 		registerDeviceToken(w, r)
 	case "DELETE":
 		deleteDeviceToken(w, r)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func sendPushMessage(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

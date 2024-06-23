@@ -1,0 +1,13 @@
+service APNS {
+  // Sends a message to be pushed to a given iOS device
+  rpc DeliverPushMessage(PushMessage) returns (Result) {}
+}
+
+message PushMessage {
+  required string idc = 1;
+  required string message = 2;
+}
+
+message Result {
+  required int32 status = 1;
+}
